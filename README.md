@@ -1,5 +1,7 @@
 сырный соус тян в тг
 
+установите нужные библиотеки через pip install -r requirements.txt
+
 там где bot = telebot.TeleBot(SUPERSECRETTOKENLOL) в main.py замените суперсекреттокенлол на ваш токен бота (получать через botfather)
 там где api_key в main.py замените на апи ключ google gemini
 
