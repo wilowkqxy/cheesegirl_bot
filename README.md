@@ -2,8 +2,7 @@
 
 установите нужные библиотеки через pip install -r requirements.txt
 
-там где bot = telebot.TeleBot(SUPERSECRETTOKENLOL) в main.py замените суперсекреттокенлол на ваш токен бота (получать через botfather)
-там где api_key в main.py замените на апи ключ google gemini
+в supersecret.py замените api_key на апи ключ google gemini, SUPERSECRETTOKENLOL на токен вашего бота в тг (получать через botfather !!!!)
 
 запускать через python3 main.py
 
