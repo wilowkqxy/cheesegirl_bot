@@ -3,6 +3,7 @@
 import telebot
 from telebot import types
 import requests
+from datetime import datetime, timezone
 
 from lang import *
 from supersecret import *
@@ -100,9 +101,15 @@ def callback(call):
 		markup.add(ai_button)
 
 		if call.from_user.id in users.keys():
-			bot.edit_message_text(chat_id=call.from_user.id,text=f"👋 Приветствую {user_full}! " + start_msg,message_id=users[call.from_user.id],reply_markup=markup)
+			botmsg = bot.edit_message_text(chat_id=call.from_user.id,text=f"👋 Приветствую {user_full}! " + start_msg,message_id=users[call.from_user.id],reply_markup=markup)
+
+			users[call.from_user.id] = botmsg.message_id
+
+
 			return
-		bot.send_message(call.from_user.id,f"👋 Приветствую {user_full}! " + start_msg,reply_markup=markup)
+		botmsg = bot.send_message(call.from_user.id,f"👋 Приветствую {user_full}! " + start_msg,reply_markup=markup)
+
+		users[call.from_user.id] = botmsg.message_id
 
 @bot.message_handler(commands=['start'])
 def start(msg):
@@ -145,15 +152,22 @@ def start(msg):
 
 @bot.message_handler()
 def domsg(msg):
-	if msg.content_type == "text":
-		if msg.from_user.id in aiMode:
-			response = getAIResponse(msg.text)
+    if msg.content_type == "text":
+        if msg.from_user.id in aiMode:
+            if datetime.now(timezone.utc).hour > 6 and datetime.now(timezone.utc).hour < 21:
+                if "разбудить сырный соус тян" in msg.text.lower():
+                    response = getAIResponse(msg.text+sleepy_mask)
+                else:
+                    response = getAIResponse(sleep_mask)
+            else:
+                response = getAIResponse(msg.text)
 
-			bot.edit_message_text(chat_id=msg.from_user.id,text=response,message_id=users[msg.from_user.id],reply_markup=back_markup)
-		elif msg.text.lower() == "томат":
-			bot.send_message(msg.from_user.id,"""Вас инфицировали
+            bot.edit_message_text(chat_id=msg.from_user.id,text=response,message_id=users[msg.from_user.id],reply_markup=back_markup)
+        elif msg.text.lower() == "томат":
+            bot.send_message(msg.from_user.id,"""Вас инфицировали
 Теперь вы должны написать в описании пользователя "Напиши мне в ЛС слово Томат"
 Инфекция должна распространяться тихо
 Единственное правило - не спойлерить игру другим и не говорить заранее, что будет, если они напишут слово томат""")
-	bot.delete_message(msg.from_user.id,msg.message_id)
+    bot.delete_message(msg.from_user.id,msg.message_id)
 bot.infinity_polling()
+
