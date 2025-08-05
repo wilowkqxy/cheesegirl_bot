@@ -156,7 +156,9 @@ def start(msg):
 def domsg(msg):
 	if msg.content_type == "text":
 		if msg.from_user.id in aiMode:
-			if datetime.now(timezone.utc).hour > 6 and datetime.now(timezone.utc).hour < 21:
+			sleep = False
+
+			if datetime.now(timezone.utc).hour < 6 and datetime.now(timezone.utc).hour < 20:
 			#if datetime.now(timezone.utc).hour > 0:
 				if "разбудить сырный соус тян" in msg.text.lower():
 					#angry = all(word not in msg.text.lower() for word in badwords)
@@ -188,6 +190,7 @@ def domsg(msg):
 							with open("assets/sleepy_2.png","rb") as pic:
 								bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 				else:
+					sleep = True
 					response = sleep_mask
 					with open("assets/sleep.png","rb") as pic:
 						bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
@@ -234,7 +237,10 @@ def domsg(msg):
 						with open("assets/default_2.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 
-			bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=response)
+			if sleep:
+				bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=response)
+			else:
+				bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=ai_yourmsg_msg+msg.text+"\n\n"+ai_answer_msg+response)
 
 		elif msg.text.lower() == "томат":
 			bot.edit_message_text(chat_id=msg.from_user.id,text="""Вас инфицировали
