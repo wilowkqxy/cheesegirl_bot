@@ -1,3 +1,6 @@
+bot: https://t.me/cheesegirl_bot
+creator: https://t.me/username008 (wilowkqxy)
+
 сырный соус тян в тг
 
 установите нужные библиотеки через pip install -r requirements.txt
