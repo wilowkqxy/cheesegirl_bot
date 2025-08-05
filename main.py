@@ -156,7 +156,8 @@ def start(msg):
 def domsg(msg):
 	if msg.content_type == "text":
 		if msg.from_user.id in aiMode:
-			if datetime.now(timezone.utc).hour < 6 and datetime.now(timezone.utc).hour < 21:
+			if datetime.now(timezone.utc).hour > 6 and datetime.now(timezone.utc).hour < 21:
+			#if datetime.now(timezone.utc).hour > 0:
 				if "разбудить сырный соус тян" in msg.text.lower():
 					#angry = all(word not in msg.text.lower() for word in badwords)
 
@@ -176,8 +177,6 @@ def domsg(msg):
 						response = getAIResponse(msg.text+sleepy_mask)
 
 					if angry:
-						response += angry_mask
-
 						with open("assets/angry_sleepy.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 
