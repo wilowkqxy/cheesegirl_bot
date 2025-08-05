@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 import telebot
-from telebot import types
 import requests
+import random
+
+from telebot import types
 from datetime import datetime, timezone
 
 from lang import *
@@ -34,7 +36,7 @@ def getAIResponse(prompt):
 		"contents": [
 			{
 				"parts": [
-		        		{"text": mask + prompt}
+					{"text": mask + prompt}
 				]
 			}
 		]
@@ -86,9 +88,9 @@ def callback(call):
 			callback_data = "about"
 		)
 		ai_button = types.InlineKeyboardButton(
-	    	text = "🗣 поговорить с сырный соус тян  ",
-	    	callback_data = "ai"
-    	)
+			text = "🗣 поговорить с сырный соус тян  ",
+			callback_data = "ai"
+		)
 
 		user_full = call.from_user.first_name
 
@@ -152,22 +154,79 @@ def start(msg):
 
 @bot.message_handler()
 def domsg(msg):
-    if msg.content_type == "text":
-        if msg.from_user.id in aiMode:
-            if datetime.now(timezone.utc).hour > 6 and datetime.now(timezone.utc).hour < 21:
-                if "разбудить сырный соус тян" in msg.text.lower():
-                    response = getAIResponse(msg.text+sleepy_mask)
-                else:
-                    response = getAIResponse(sleep_mask)
-            else:
-                response = getAIResponse(msg.text)
+	if msg.content_type == "text":
+		if msg.from_user.id in aiMode:
+			if datetime.now(timezone.utc).hour < 6 and datetime.now(timezone.utc).hour < 21:
+				if "разбудить сырный соус тян" in msg.text.lower():
+					#angry = all(word not in msg.text.lower() for word in badwords)
 
-            bot.edit_message_text(chat_id=msg.from_user.id,text=response,message_id=users[msg.from_user.id],reply_markup=back_markup)
-        elif msg.text.lower() == "томат":
-            bot.send_message(msg.from_user.id,"""Вас инфицировали
+					#for word in badwords:
+					#	if word in msg.text.lower():
+					#		angry = True
+					#		break
+
+					angry = any(word in msg.text.lower() for word in badwords)
+
+					response = getAIResponse(msg.text+sleepy_mask)
+
+					if angry:
+						with open("assets/angry_sleepy.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+
+					if random.randint(1,2) == 1 and not angry:
+						with open("assets/sleepy.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+					else:
+						if not angry:
+							with open("assets/sleepy_2.png","rb") as pic:
+								bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+				else:
+					response = sleep_mask
+					with open("assets/sleep.png","rb") as pic:
+						bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+			else:
+				#angry = True
+
+				#for i in range(1,len(badwords)):
+				#	if badwords[i] in msg.text.lower():
+				#		angry = True
+				#		break
+
+				#for word in badwords:
+				#	if word in msg.text.lower():
+				#		angry = True
+				#		break
+
+				#angry = all(word not in msg.text.lower() for word in badwords)
+
+				angry = any(word in msg.text.lower() for word in badwords)
+
+				print(f"bad word detected: {angry}")
+
+				response = getAIResponse(msg.text)
+
+				if random.randint(1,2) == 1:
+					if angry:
+						with open("assets/angry.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+					else:
+						with open("assets/default.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+				else:
+					if angry:
+						with open("assets/angry_2.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+					else:
+						with open("assets/default_2.png","rb") as pic:
+							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
+
+			bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=response)
+
+		elif msg.text.lower() == "томат":
+			bot.edit_message_text(chat_id=msg.from_user.id,text="""Вас инфицировали
 Теперь вы должны написать в описании пользователя "Напиши мне в ЛС слово Томат"
 Инфекция должна распространяться тихо
-Единственное правило - не спойлерить игру другим и не говорить заранее, что будет, если они напишут слово томат""")
-    bot.delete_message(msg.from_user.id,msg.message_id)
-bot.infinity_polling()
+Единственное правило - не спойлерить игру другим и не говорить заранее, что будет, если они напишут слово томат""",message_id=users[msg.from_user.id],reply_markup=back_markup)
 
+
+bot.infinity_polling()
