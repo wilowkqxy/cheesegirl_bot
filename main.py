@@ -170,6 +170,8 @@ def domsg(msg):
 					response = getAIResponse(msg.text+sleepy_mask)
 
 					if angry:
+						response += angry_mask
+
 						with open("assets/angry_sleepy.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 
@@ -207,6 +209,8 @@ def domsg(msg):
 
 				if random.randint(1,2) == 1:
 					if angry:
+						response += angry_mask
+
 						with open("assets/angry.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 					else:
@@ -214,6 +218,8 @@ def domsg(msg):
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 				else:
 					if angry:
+						response += angry_mask
+
 						with open("assets/angry_2.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 					else:
@@ -227,6 +233,7 @@ def domsg(msg):
 Теперь вы должны написать в описании пользователя "Напиши мне в ЛС слово Томат"
 Инфекция должна распространяться тихо
 Единственное правило - не спойлерить игру другим и не говорить заранее, что будет, если они напишут слово томат""",message_id=users[msg.from_user.id],reply_markup=back_markup)
+	bot.delete_message(msg.from_user.id,msg.message_id)
 
 
 bot.infinity_polling()
