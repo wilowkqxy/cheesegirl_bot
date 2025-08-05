@@ -166,8 +166,10 @@ def domsg(msg):
 					#		break
 
 					angry = any(word in msg.text.lower() for word in badwords)
-
-					response = getAIResponse(msg.text+sleepy_mask)
+					if angry:
+						response = getAIResponse(msg.text+sleepy_mask+angry_mask)
+					else:
+						response = getAIResponse(msg.text+sleepy_mask)
 
 					if angry:
 						response += angry_mask
@@ -205,11 +207,13 @@ def domsg(msg):
 
 				print(f"bad word detected: {angry}")
 
-				response = getAIResponse(msg.text)
+				if angry:
+					response = getAIResponse(msg.text+angry_mask)
+				else:
+					response = getAIResponse(msg.text)
 
 				if random.randint(1,2) == 1:
 					if angry:
-						response += angry_mask
 
 						with open("assets/angry.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
@@ -218,8 +222,6 @@ def domsg(msg):
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 				else:
 					if angry:
-						response += angry_mask
-
 						with open("assets/angry_2.png","rb") as pic:
 							bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id],reply_markup=back_markup)
 					else:
