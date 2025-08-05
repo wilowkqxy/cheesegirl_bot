@@ -165,6 +165,10 @@ def domsg(msg):
 					#		angry = True
 					#		break
 
+					with open("assets/thinking_sleepy.png","rb") as pic:
+						bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id])
+						bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=thinking_msg)
+
 					angry = any(word in msg.text.lower() for word in badwords)
 					if angry:
 						response = getAIResponse(msg.text+sleepy_mask+angry_mask)
@@ -202,6 +206,9 @@ def domsg(msg):
 				#		break
 
 				#angry = all(word not in msg.text.lower() for word in badwords)
+				with open("assets/thinking.png","rb") as pic:
+					bot.edit_message_media(chat_id=msg.from_user.id, media=types.InputMediaPhoto(pic) , message_id=users[msg.from_user.id])
+					bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=thinking_msg)
 
 				angry = any(word in msg.text.lower() for word in badwords)
 
