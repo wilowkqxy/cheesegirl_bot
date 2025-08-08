@@ -10,17 +10,19 @@ creator: https://t.me/username008 (wilowkqxy)
 
 создайте папку assets в которую поместите следующие файлы (контент это картинки на разные настроения):
 
-  default.png
+  starter.png
+
+  default_1.png
   
   default_2.png
   
-  angry.png
+  angry_1.png
   
   angry_2.png
   
   sleep.png
   
-  sleepy.png
+  sleepy_1.png
   
   sleepy_2.png
   
