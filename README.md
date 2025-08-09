@@ -32,6 +32,10 @@ creator: https://t.me/username008 (wilowkqxy)
 
   thinking_sleepy.png
 
+  ideas.jpg
+
+  error.jpg
+
 в supersecret.py замените api_key на апи ключ google gemini, SUPERSECRETTOKENLOL на токен вашего бота в тг (получать через botfather !!!!)
 
 
