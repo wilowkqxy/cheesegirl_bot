@@ -259,9 +259,6 @@ def callback(call):
 		elif call.data == "back":
 			if call.from_user.id in aiMode:
 				aiMode.remove(call.from_user.id)
-			if call.from_user.id in ideasMode:
-				ideasMode.remove(call.from_user.id)
-
 
 
 			markup = types.InlineKeyboardMarkup()
@@ -292,8 +289,7 @@ def callback(call):
 			if call.from_user.last_name:
 				user_full += " " + call.from_user.last_name
 
-			markup.add(discord_button)
-			markup.add(tg_button)
+			markup.add(discord_button,tg_button)
 			markup.add(about_button)
 			markup.add(ideas_button)
 			markup.add(ai_button)
@@ -304,9 +300,10 @@ def callback(call):
 						inAiChat.remove(call.from_user.id)
 
 						bot.edit_message_media(chat_id=call.from_user.id,message_id=users[call.from_user.id],media=types.InputMediaPhoto(pic))
-						bot.edit_message_caption(chat_id=call.from_user.id,message_id=users[call.from_user.id],caption=f"{start_msg_1}{user_full}! " + start_msg,reply_markup=markup)
+					elif call.from_user.id in ideasMode:
+						ideasMode.remove(call.from_user.id)
 
-						return
+						bot.edit_message_media(chat_id=call.from_user.id,message_id=users[call.from_user.id],media=types.InputMediaPhoto(pic))
 
 					bot.edit_message_caption(chat_id=call.from_user.id,message_id=users[call.from_user.id],caption=f"{start_msg_1}{user_full}! " + start_msg,reply_markup=markup)
 				else:
@@ -354,8 +351,7 @@ def start(msg):
 	if msg.from_user.last_name:
 		user_full += " " + msg.from_user.last_name
 
-	markup.add(discord_button)
-	markup.add(tg_button)
+	markup.add(discord_button,tg_button)
 	markup.add(about_button)
 	markup.add(ideas_button)
 	markup.add(ai_button)
@@ -376,8 +372,21 @@ def domsg(msg):
 				if msg.from_user.id not in inAiChat:
 					inAiChat.append(msg.from_user.id)
 
-				if datetime.now(timezone.utc).hour+3 <= 9 and datetime.now(timezone.utc).hour+3 >= 21: # спит с 21:00 до 9:00 (UTC+3)
+				if random.randint(1,20) == 17:
+					# хуесосы сука я вас ненавижу чтобы в горели в аду
+
+					with open("assets/error.jpg","rb") as pic:
+						bot.send_photo(chat_id=msg.from_user.id,photo=pic,caption=wrong_time_msg,reply_markup=close_markup)
+
+					bot.delete_message(msg.from_user.id,msg.message_id)
+
+					return
+
+				print(f"current utc hour: {datetime.now(timezone.utc).hour}")
+
+				if datetime.now(timezone.utc).hour < 6 or datetime.now(timezone.utc).hour > 17: # спит с 21:00 до 9:00 (UTC+3)
 				#if true:
+					print("sleepy")
 					if wake_up_msg in msg.text.lower():
 						with open("assets/thinking_sleepy.png","rb") as pic:
 							#bot.delete_message(chat_id=msg.from_user.id,message_id=users[msg.from_user.id])
@@ -386,7 +395,8 @@ def domsg(msg):
 							bot.edit_message_media(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],media=types.InputMediaPhoto(pic))
 							bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=thinking_msg)
 
-						angry = any(word in msg.text.lower() for word in badwords)
+						angry = any(word in msg.text.lower().split(" ") for word in badwords)
+						print(f"angry mode: {angry}")
 
 						if angry:
 							response = getAIResponse(msg.text+sleepy_mask+angry_mask)
@@ -406,8 +416,11 @@ def domsg(msg):
 							#users[msg.from_user.id] = botmsg.message_id
 							bot.edit_message_media(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],media=types.InputMediaPhoto(pic))
 							bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=sleep_mask,reply_markup=back_markup)
+
+							bot.delete_message(msg.from_user.id,msg.message_id)
 							return
 				else:
+					print("not sleepy")
 					with open("assets/thinking.png","rb") as pic:
 						#bot.delete_message(chat_id=msg.from_user.id,message_id=users[msg.from_user.id])
 						#botmsg = bot.send_photo(chat_id=msg.from_user.id,photo=pic,caption=thinking_msg,reply_markup=back_markup)
@@ -415,7 +428,8 @@ def domsg(msg):
 						bot.edit_message_media(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],media=types.InputMediaPhoto(pic))
 						bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=thinking_msg,reply_markup=back_markup)
 
-					angry = any(word in msg.text.lower() for word in badwords)
+					angry = any(word in msg.text.lower().split(" ") for word in badwords)
+					print(f"angry mode: {angry}")
 
 					if angry:
 						response = getAIResponse(msg.text+angry_mask)
@@ -438,6 +452,10 @@ def domsg(msg):
 			except Exception as e:
 				with open("assets/error.jpg","rb") as pic:
 					bot.send_photo(chat_id=msg.from_user.id,photo=pic,caption=ai_error_msg+str(e),reply_markup=close_markup)
+					try:
+						bot.edit_message_caption(chat_id=msg.from_user.id,message_id=users[msg.from_user.id],caption=ai_yourmsg_msg+msg.text+"\n\n"+ai_answer_msg+ai_noanswer_msg,reply_markup=back_markup)
+					except:
+						print("suka")
 		elif msg.from_user.id in ideasMode:
 			try:
 				markup = types.InlineKeyboardMarkup()
